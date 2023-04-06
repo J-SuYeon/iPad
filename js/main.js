@@ -48,12 +48,16 @@ const searchDlayEls=[...searchWrapEl.querySelectorAll('li')];
   // 이름 없는 함수 -> 콜백함수
   // 클릭했을 때 이 이름을 가진 함수를 실행.
 searchStarterEl.addEventListener('click',showSearch);
-searchCloserEl.addEventListener('click', hideSearch);
+searchCloserEl.addEventListener('click', function (event) {
+  event.stopPropagation()
+  // 상위 요소로 전파하는 이벤트 버블링 정지
+  hideSearch()
+});
 searchShadowEl.addEventListener('click', hideSearch);
 
 function showSearch() {
   headerEl.classList.add('searching')
-  document.documentElement.classList.add('fixed')
+  stopScroll()
   // documentElement: 이 문서의 최상위 요소(html태그)
   headerMenuEls.reverse().forEach(function (el, index) {
     el.style.transitionDelay = index *.4 / headerMenuEls.length + 's'
@@ -68,7 +72,7 @@ function showSearch() {
 }
 function hideSearch() {
   headerEl.classList.remove('searching')
-  document.documentElement.classList.remove('fixed')
+  playScroll()
   headerMenuEls.reverse().forEach(function (el, index) {
     el.style.transitionDelay = index *.4 / headerMenuEls.length + 's'
   })
@@ -78,6 +82,82 @@ function hideSearch() {
   searchDlayEls.reverse()
   searchInputEl.value=''
   // 검색바 사라질 때 입력했던 값 초기화
+}
+
+
+// 헤더 메뉴 토글(모바일)
+// 재활용 가능하도록 위의 함수에서 꺼내와 따로 함수로 작성함.
+function playScroll() {
+  document.documentElement.classList.remove('fixed')
+}
+function stopScroll() {
+  document.documentElement.classList.add('fixed')
+}
+
+const menuStarterEl = document.querySelector('header .menu-starter')
+menuStarterEl.addEventListener('click', function () {
+  if (headerEl.classList.contains('menuing')) {
+    headerEl.classList.remove('menuing')
+    searchInputEl.value=''
+    // 헤더 메뉴 종료되면 검색 내용 초기화
+    playScroll()
+  } else {
+    headerEl.classList.add('menuing')
+    stopScroll()
+  }
+})
+
+// 헤더 검색(모바일)
+const searchTextFieldEl = document.querySelector('header .textfield')
+const searchCancelEl = document.querySelector('header .search-canceler')
+searchTextFieldEl.addEventListener('click', function() {
+  // textfield를 클릭하면 검색모드가 되도록 설정되어 있어서, 모바일로 변경하는 즉시 검색창이 뜨는 문제 있음
+  headerEl.classList.add('searching--mobile')
+  searchInputEl.focus()
+})
+searchCancelEl.addEventListener('click',function () {
+  headerEl.classList.remove('searching--mobile')
+})
+
+// 검색창을 연 상태로 모바일 모드로 변경했을 때 검색창만 화면에 뜨는 오류 수정
+window.addEventListener('resize', function () {
+  // window(화면 전체) 객체에서 창 사이즈가 바뀔 때마다 함수를 실행
+  if (window.innerWidth <= 740) {
+    // 화면 너비가 740 이하일 때(모바일 모드일 때)
+    headerEl.classList.remove('searching')
+  } else {
+    headerEl.classList.remove('searching--mobile')
+  }
+})
+
+// Navigation 토글 열고닫기(모바일)
+const navEl = document.querySelector('nav')
+const navMenuToggleEl = navEl.querySelector('.menu-toggler')
+const navMenuShadowEl = navEl.querySelector('.shadow')
+
+navMenuToggleEl.addEventListener('click', function () {
+  if (navEl.classList.contains('menuing')) {
+    hideNavMenu()
+  } else {
+    showNavMenu()
+  }
+})
+
+navEl.addEventListener('click', function (event) {
+  event.stopPropagation()
+  // navigation 영역을 클릭했을 때는 상위 영역으로 이벤트가 전파되지 않음
+  // -> nav영역 클릭하면 navmenu가 닫히지 않게 됨. (모바일)
+})
+// shadow 영역 클릭하면 닫히게 하기(모바일)
+navMenuShadowEl.addEventListener('click', hideNavMenu)
+// navigation 연 상태에서 배경을 클릭하면 닫히게 하기(모바일)
+window.addEventListener('click', hideNavMenu)
+
+function showNavMenu() {
+  navEl.classList.add('menuing')
+}
+function hideNavMenu() {
+  navEl.classList.remove('menuing')
 }
 
 // InterSection Observer(가시성 관찰)로 화면에 요소 들어올 때 변화 주기.
@@ -168,7 +248,8 @@ navigations.forEach(function (nav) {
 
   mapEl.innerHTML = /* html */`
     <h3>
-      <span class="text">${nav.title}></span>
+      <span class="text">${nav.title}</span>
+      <span class="icon">+</span>
     </h3>
     <ul>
       ${mapList}
@@ -183,3 +264,15 @@ navigations.forEach(function (nav) {
 const thisYearEl = document.querySelector('span.this-year')
 thisYearEl.textContent = new Date().getFullYear()
 // new: 생성자 함수 호출하는 것(js의 class에 해당)
+
+
+// footer - 아코디언 메뉴 (모바일)
+const mapEls = document.querySelectorAll('footer .navigations .map')
+mapEls.forEach(function (el) {
+  const h3El = el.querySelector('h3')
+  h3El.addEventListener('click', function () {
+    el.classList.toggle('active')
+    // toggle 메소드 : 제목 부분을 클릭하면 active가 있을 때 없애주고, 없으면 추가해줌
+    // -> add와 remove 역할 동시에.
+  })
+})

@@ -39,6 +39,15 @@
     <div class="inner">
 
       <ul class="menu">
+        <li class="menu-starter">
+          <a>
+            <!-- 구조적으로만 넣는 a태그 -->
+            <div>
+              <span></span>
+              <span></span>
+            </div>
+          </a>
+        </li>
         <li class="apple-logo"><a href="javascript:void(0)">Apple</a></li>
         <li><a href="javascript:void(0)">스토어</a></li>
         <li><a href="javascript:void(0)">Mac</a></li>
@@ -75,7 +84,9 @@
             <input type="text" placeholder="apple.com 검색" />
             <div class="search-icon"></div>
             <div class="search-closer"></div>
+            <!-- search-closer를 선택했을 때 이벤트 버블링으로 textfield 닫히는 문제 수정 -->
           </div>
+          <div class="search-canceler">취소</div>
           <div class="autocompletes">
             <h3>빠른 링크</h3>
             <ul>
@@ -89,14 +100,33 @@
         </div>
       </div>
 
+      <!-- 모바일 모드에서만 보일 새로운 메뉴 구조 생성(기존에 있던 것은 활용하기 어려움) -->
+      <div class="clone-menu">
+        <ul>
+          <li><a href="javascript:void(0)">스토어</a></li>
+          <li><a href="javascript:void(0)">Mac</a></li>
+          <li><a href="javascript:void(0)">iPad</a></li>
+          <li><a href="javascript:void(0)">iPhone</a></li>
+          <li><a href="javascript:void(0)">Watch</a></li>
+          <li><a href="javascript:void(0)">Airpods</a></li>
+          <li><a href="javascript:void(0)">Apple 독점 제공</a></li>
+          <li><a href="javascript:void(0)">액세사리</a></li>
+          <li><a href="javascript:void(0)">고객지원</a></li>
+        </ul>
+      </div>
+
     </div>
   </header>
 
   <!-- Navigation -->
   <nav>
+    <div class="shadow"></div>
+    <div class="contents-bg"></div>
+    <!-- contents의 배경으로 쓰일 요소 -->
     <div class="inner">
 
       <h1>iPad</h1>
+      <div class="menu-toggler"></div>
       <ul class="menu">
         <li class="active"><a href="javascript:void(0)">개요</a></li>
         <li><a href="javascript:void(0)">iPad를 선택하는 이유</a></li>
